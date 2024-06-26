@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const { swaggerUi, swaggerSpec } = require("./utils/swaggerConfig");
 const dotenv = require("dotenv");
@@ -12,6 +13,7 @@ const app = express();
 
 // Middlewares
 app.use(bodyParser.json());
+app.use(cors());
 
 // Routes
 const authRoutes = require("./routes/auth");
