@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { swaggerUi, swaggerSpec } = require("./utils/swaggerConfig");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -16,8 +17,9 @@ app.use(bodyParser.json());
 const authRoutes = require("./routes/auth");
 const playerRoutes = require("./routes/players");
 
-app.use("/api/auth", authRoutes);
-app.use("/api/players", playerRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api", authRoutes);
+app.use("/api", playerRoutes);
 
 const PORT = process.env.PORT || 5000;
 

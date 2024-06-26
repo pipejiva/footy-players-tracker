@@ -40,3 +40,7 @@ footy-players-tracker/backend/src
 └── README.md           # Project documentation
 
 ```
+
+3. API documentation
+
+- **Swagger/OpenAPI Documentation**: The link to look the API documentation is `http://localhost:3000/api-docs`.
