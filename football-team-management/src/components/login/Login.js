@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -13,7 +15,13 @@ const Login = () => {
         username,
         password,
       });
-      console.log(response.data); // Handle response based on your logic
+
+      const { token } = response.data;
+
+      localStorage.setItem("token", token);
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      navigate("/players");
     } catch (error) {
       setError("Invalid username or password");
       console.error("Error during login:", error);
