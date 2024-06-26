@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
 import { useAuth } from "../../context/AuthContext";
 
 const Players = () => {
@@ -41,7 +42,7 @@ const Players = () => {
   const handleCreatePlayer = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/api/players",
         {
           name,
@@ -64,7 +65,7 @@ const Players = () => {
 
   const handleEditPlayer = async () => {
     try {
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3000/api/players/${id}`,
         {
           name,
@@ -184,6 +185,7 @@ const Players = () => {
                   <th>Weight</th>
                   <th>Height</th>
                   <th>Clothing Size</th>
+                  <th>Created At</th>
                   <th>Edit</th>
                   <th>Delete</th>
                 </tr>
@@ -195,6 +197,11 @@ const Players = () => {
                     <td>{player.weight}</td>
                     <td>{player.height}</td>
                     <td>{player.clothingSize}</td>
+                    <td>
+                      {moment(player.createdAt).format(
+                        "MMMM Do YYYY, h:mm:ss a"
+                      )}
+                    </td>
                     <td>
                       <button
                         onClick={() => editPlayer(player)}
