@@ -2,38 +2,39 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../../context/AuthContext";
 
 const Players = () => {
   const [players, setPlayers] = useState([]);
+  const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [clothingSize, setClothingSize] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setIsAuthenticated, isAuthenticated, handleLogout } = useAuth();
+  const [isCreateMode, setCreateMode] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      console.log(token);
       try {
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
+
         if (decoded.exp > currentTime) {
           setIsAuthenticated(true);
           fetchPlayers();
         } else {
-          setIsAuthenticated(false);
-          localStorage.removeItem("token");
+          handleLogout(); // Token expired, log out
         }
       } catch (error) {
         console.error("Error decoding token:", error);
-        setIsAuthenticated(false);
-        localStorage.removeItem("token");
+        handleLogout(); // Error decoding token, log out
       }
     } else {
-      setIsAuthenticated(false);
-      navigate("/login");
+      handleLogout(); // No token found, log out
     }
   }, []);
 
@@ -68,17 +69,47 @@ const Players = () => {
         }
       );
       fetchPlayers();
-      setName("");
-      setWeight("");
-      setHeight("");
-      setClothingSize("");
+      clearForm();
     } catch (error) {
       console.error("Error creating player:", error);
     }
   };
 
+  const handleEditPlayer = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/${id}`,
+        {
+          name,
+          weight,
+          height,
+          clothingSize,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      fetchPlayers();
+      clearForm();
+      setCreateMode(true);
+    } catch (error) {
+      console.error("Error editing player:", error);
+    }
+  };
+
+  const editPlayer = (player) => {
+    setId(player.id);
+    setName(player.name);
+    setWeight(player.weight);
+    setHeight(player.height);
+    setClothingSize(player.clothingSize);
+    setCreateMode(false);
+  };
+
   const handleDeletePlayer = async (playerId) => {
-    if (window.confirm("¿Estás seguro de eliminar este jugador?")) {
+    if (window.confirm("Are you sure you want to delete this player?")) {
       try {
         await axios.delete(`http://localhost:3000/api/${playerId}`, {
           headers: {
@@ -92,15 +123,30 @@ const Players = () => {
     }
   };
 
+  const clearForm = () => {
+    setId("");
+    setName("");
+    setWeight("");
+    setHeight("");
+    setClothingSize("");
+  };
+
   return (
     <div>
       <h2>Players</h2>
-      {!isAuthenticated && (
-        <p>Debe iniciar sesión para acceder a esta página.</p>
-      )}
+      {!isAuthenticated && <p>Please Login to access here!</p>}
       {isAuthenticated && (
         <>
-          <form onSubmit={handleCreatePlayer}>
+          <form onSubmit={isCreateMode ? handleCreatePlayer : handleEditPlayer}>
+            {!isCreateMode && (
+              <div>
+                <input
+                  type="hidden"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                />
+              </div>
+            )}
             <div>
               <label>Name:</label>
               <input
@@ -112,7 +158,7 @@ const Players = () => {
             <div>
               <label>Weight:</label>
               <input
-                type="text"
+                type="number"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
               />
@@ -120,7 +166,7 @@ const Players = () => {
             <div>
               <label>Height:</label>
               <input
-                type="text"
+                type="number"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
               />
@@ -133,13 +179,16 @@ const Players = () => {
                 onChange={(e) => setClothingSize(e.target.value)}
               />
             </div>
-            <button type="submit">Create Player</button>
+            <button type="submit">
+              {isCreateMode ? "Create Player" : "Edit Player"}
+            </button>
           </form>
           <ul>
             {players.map((player) => (
               <li key={player.id}>
                 {player.name} - Weight: {player.weight} - Height:{" "}
                 {player.height} - Clothing Size: {player.clothingSize}
+                <button onClick={() => editPlayer(player)}>Edit</button>
                 <button onClick={() => handleDeletePlayer(player.id)}>
                   Delete
                 </button>
