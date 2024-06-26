@@ -65,7 +65,7 @@ const Players = () => {
   const handleEditPlayer = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/${id}`,
+        `http://localhost:3000/api/players/${id}`,
         {
           name,
           weight,
@@ -98,7 +98,7 @@ const Players = () => {
   const handleDeletePlayer = async (playerId) => {
     if (window.confirm("Are you sure you want to delete this player?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/${playerId}`, {
+        await axios.delete(`http://localhost:3000/api/players/${playerId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

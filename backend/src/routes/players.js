@@ -7,7 +7,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/player:
+ * /api/players:
  *   get:
  *     summary: Get all players
  *     description: Retrieves all players from the database.
@@ -19,11 +19,11 @@ const router = express.Router();
  *       '401':
  *         description: Unauthorized access.
  */
-router.get("/player", isAuth, playerController.getPlayers);
+router.get("/players", isAuth, playerController.getPlayers);
 
 /**
  * @swagger
- * /api/player:
+ * /api/players:
  *   post:
  *     summary: Create a new player
  *     description: Creates a new player with the provided details.
@@ -53,7 +53,7 @@ router.get("/player", isAuth, playerController.getPlayers);
  *         description: Unauthorized access.
  */
 router.post(
-  "/player",
+  "/players",
   isAuth,
   [
     body("name").trim().not().isEmpty(),
@@ -66,7 +66,7 @@ router.post(
 
 /**
  * @swagger
- * /api/{playerId}:
+ * /api/players/{playerId}:
  *   put:
  *     summary: Update a player
  *     description: Updates an existing player with the provided details.
@@ -102,7 +102,7 @@ router.post(
  *         description: Unauthorized access.
  */
 router.put(
-  "/:playerId",
+  "/players/:playerId",
   isAuth,
   [
     body("name").trim().not().isEmpty(),
@@ -115,7 +115,7 @@ router.put(
 
 /**
  * @swagger
- * /api/{playerId}:
+ * /api/players/{playerId}:
  *   delete:
  *     summary: Delete a player
  *     description: Deletes an existing player.
@@ -133,11 +133,11 @@ router.put(
  *       '401':
  *         description: Unauthorized access.
  */
-router.delete("/:playerId", isAuth, playerController.deletePlayer);
+router.delete("/players/:playerId", isAuth, playerController.deletePlayer);
 
 /**
  * @swagger
- * /api/{playerId}/tests:
+ * /api/players/{playerId}/tests:
  *   post:
  *     summary: Add test for a player
  *     description: Adds a new test for a specific player.
@@ -168,7 +168,7 @@ router.delete("/:playerId", isAuth, playerController.deletePlayer);
  *       '401':
  *         description: Unauthorized access.
  */
-router.post("/:playerId/tests", isAuth, playerController.addTest);
+router.post("/players/:playerId/tests", isAuth, playerController.addTest);
 
 /**
  * @swagger
@@ -190,6 +190,6 @@ router.post("/:playerId/tests", isAuth, playerController.addTest);
  *       '401':
  *         description: Unauthorized access.
  */
-router.get("/:playerId/tests", isAuth, playerController.getTests);
+router.get("/players/:playerId/tests", isAuth, playerController.getTests);
 
 module.exports = router;

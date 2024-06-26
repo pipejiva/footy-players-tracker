@@ -20,7 +20,7 @@ const Login = () => {
 
       localStorage.setItem("token", token);
 
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      //axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       navigate("/players");
     } catch (error) {
       setError("Invalid username or password");

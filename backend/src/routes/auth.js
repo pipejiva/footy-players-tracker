@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/signup:
+ * /api/user:
  *   post:
  *     summary: User Registration
  *     description: Creates a new user with the provided username and password.
@@ -28,7 +28,7 @@ const router = express.Router();
  *         description: Bad request or invalid user data.
  */
 router.post(
-  "/signup",
+  "/user",
   [
     body("username").trim().not().isEmpty(),
     body("password").trim().isLength({ min: 6 }),
