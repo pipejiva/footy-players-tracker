@@ -11,6 +11,7 @@ import PlayersPage from "./pages/Players";
 import Register from "./pages/Register";
 import Topbar from "./components/topbar";
 import { AuthProvider } from "./context/AuthContext";
+import "./App.css";
 const App = () => {
   return (
     <Router>

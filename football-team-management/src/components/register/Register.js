@@ -9,10 +9,13 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/signup", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        {
+          username,
+          password,
+        }
+      );
       console.log(response.data); // Handle response based on your logic
     } catch (error) {
       setError("Registration failed");
@@ -21,10 +24,10 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <div>
+      <form onSubmit={handleRegister} className="auth-form">
+        <div className="form-group">
           <label>Username:</label>
           <input
             type="text"
@@ -32,7 +35,7 @@ const Register = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -40,7 +43,7 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <button type="submit">Register</button>
       </form>
     </div>

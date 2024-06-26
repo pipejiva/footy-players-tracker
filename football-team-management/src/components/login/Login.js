@@ -29,10 +29,10 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
+      <form onSubmit={handleLogin} className="auth-form">
+        <div className="form-group">
           <label>Username:</label>
           <input
             type="text"
@@ -40,7 +40,7 @@ const Login = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -48,7 +48,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <button type="submit">Login</button>
       </form>
     </div>

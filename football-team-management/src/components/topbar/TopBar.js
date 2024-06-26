@@ -12,26 +12,34 @@ const Topbar = () => {
   };
 
   return (
-    <div>
-      <nav>
-        <ul>
+    <div className="topbar">
+      <nav className="navbar">
+        <ul className="navbar-nav">
           {!isAuthenticated && (
             <>
-              <li>
-                <Link to="/login">Login</Link>
+              <li className="nav-item">
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
               </li>
-              <li>
-                <Link to="/register">Register</Link>
+              <li className="nav-item">
+                <Link to="/register" className="nav-link">
+                  Register
+                </Link>
               </li>
             </>
           )}
           {isAuthenticated && (
             <>
-              <li>
-                <Link to="/players">Players</Link>
+              <li className="nav-item">
+                <Link to="/players" className="nav-link">
+                  Players
+                </Link>
               </li>
-              <li>
-                <button onClick={logout}>Logout</button>
+              <li className="nav-item">
+                <button onClick={logout} className="nav-link logout-btn">
+                  Logout
+                </button>
               </li>
             </>
           )}

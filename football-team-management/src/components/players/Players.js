@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/AuthContext";
 
 const Players = () => {
@@ -11,28 +9,17 @@ const Players = () => {
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [clothingSize, setClothingSize] = useState("");
-  const { setIsAuthenticated, isAuthenticated, handleLogout } = useAuth();
+  const { setIsAuthenticated, isAuthenticated, validateSession, handleLogout } =
+    useAuth();
   const [isCreateMode, setCreateMode] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
+    console.log("Token:", token);
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-
-        if (decoded.exp > currentTime) {
-          setIsAuthenticated(true);
-          fetchPlayers();
-        } else {
-          handleLogout(); // Token expired, log out
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        handleLogout(); // Error decoding token, log out
-      }
+      validateSession();
+      fetchPlayers();
     } else {
       handleLogout(); // No token found, log out
     }
@@ -40,7 +27,7 @@ const Players = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/player", {
+      const response = await axios.get("http://localhost:3000/api/players", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -55,7 +42,7 @@ const Players = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/player",
+        "http://localhost:3000/api/players",
         {
           name,
           weight,
@@ -132,12 +119,14 @@ const Players = () => {
   };
 
   return (
-    <div>
-      <h2>Players</h2>
+    <div className="players-container">
       {!isAuthenticated && <p>Please Login to access here!</p>}
       {isAuthenticated && (
         <>
-          <form onSubmit={isCreateMode ? handleCreatePlayer : handleEditPlayer}>
+          <form
+            onSubmit={isCreateMode ? handleCreatePlayer : handleEditPlayer}
+            className="player-form"
+          >
             {!isCreateMode && (
               <div>
                 <input
@@ -147,54 +136,86 @@ const Players = () => {
                 />
               </div>
             )}
-            <div>
-              <label>Name:</label>
+            <div className="form-group">
+              <label htmlFor="name">Name:</label>
               <input
                 type="text"
+                id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div>
-              <label>Weight:</label>
+            <div className="form-group">
+              <label htmlFor="weight">Weight:</label>
               <input
                 type="number"
+                id="weight"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
               />
             </div>
-            <div>
-              <label>Height:</label>
+            <div className="form-group">
+              <label htmlFor="height">Height:</label>
               <input
                 type="number"
+                id="height"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
               />
             </div>
-            <div>
-              <label>Clothing Size:</label>
+            <div className="form-group">
+              <label htmlFor="clothingSize">Clothing Size:</label>
               <input
                 type="text"
+                id="clothingSize"
                 value={clothingSize}
                 onChange={(e) => setClothingSize(e.target.value)}
               />
             </div>
-            <button type="submit">
+            <button type="submit" className="btn">
               {isCreateMode ? "Create Player" : "Edit Player"}
             </button>
           </form>
-          <ul>
-            {players.map((player) => (
-              <li key={player.id}>
-                {player.name} - Weight: {player.weight} - Height:{" "}
-                {player.height} - Clothing Size: {player.clothingSize}
-                <button onClick={() => editPlayer(player)}>Edit</button>
-                <button onClick={() => handleDeletePlayer(player.id)}>
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div className="table-container">
+            <table className="player-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Weight</th>
+                  <th>Height</th>
+                  <th>Clothing Size</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {players.map((player) => (
+                  <tr key={player.id}>
+                    <td>{player.name}</td>
+                    <td>{player.weight}</td>
+                    <td>{player.height}</td>
+                    <td>{player.clothingSize}</td>
+                    <td>
+                      <button
+                        onClick={() => editPlayer(player)}
+                        className="edit-btn"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleDeletePlayer(player.id)}
+                        className="delete-btn"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>
